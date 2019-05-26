@@ -12,27 +12,28 @@ public class Convert {
     public static TreeNode Convert(TreeNode pRootOfTree) {
         if(pRootOfTree==null)
             return null;
-        TreeNode last = new TreeNode(0);
-        convert(pRootOfTree,last);
-        TreeNode first = last;
-        while (first!=null&&first.left!=null){
-            first = first.left;
+//        遍历到叶子节点时将叶子节点返回给父节点
+        if(pRootOfTree.left==null&&pRootOfTree.right==null)
+            return pRootOfTree;
+//        构造左子树链表
+        TreeNode left = Convert(pRootOfTree.left);
+        TreeNode curr = left;
+//        定位到左子树链表中的最后一个节点
+        while (curr!=null&&curr.right!=null)
+            curr = curr.right;
+//        将该节点和根节点链接起来
+        if(left!=null){
+            curr.right = pRootOfTree;
+            pRootOfTree.left = curr;
         }
-        return first;
-    }
-
-    private static void convert(TreeNode root,TreeNode last){
-        if(root==null)
-            return;
-        TreeNode curr = root;
-        if(curr.left!=null)
-            convert(curr.left,last);
-        curr.left = last;
-        if(last!=null)
-            last.right = curr;
-        last = curr;
-        if(curr.right!=null)
-            convert(curr.right,last);
+//        构造右子树链表
+        TreeNode right = Convert(pRootOfTree.right);
+        if(right!=null){
+            pRootOfTree.right = right;
+            right.left = pRootOfTree;
+        }
+//        left是左子树链表的头结点，若不为空，则是整个链表头结点，否则根节点最小，根节点就是头结点
+        return left==null?pRootOfTree:left;
     }
 
     public static class TreeNode {
